@@ -48,7 +48,7 @@ func (l *Logger) Log(msg string, labels Labels) (int, error) {
 		buf.WriteRune(' ')
 		buf.WriteString(k)
 		buf.WriteRune('=')
-		buf.WriteString(format(labels[k]))
+		buf.WriteString(Format(labels[k]))
 	}
 	buf.WriteByte('\n')
 
@@ -61,7 +61,13 @@ func (l *Logger) Logf(format string, labels Labels, v ...any) (int, error) {
 	return l.Log(fmt.Sprintf(format, v...), labels)
 }
 
-func format(v any) string {
+// Format transform any value into a string in an opinionated way:
+//   - String, error and [fmt.Stringer] values are quoted.
+//   - Floating values uses the %g Format with a maximum of 6 significant digits.
+//   - [time.Time] are converted to UTC and use [time.RFC3339] Format.
+//   - Integer values use [strconv.FormatUint] and [strconv.FormatInt].
+//   - All other values are formatted as %v and quoted if they have a space.
+func Format(v any) string {
 	switch x := v.(type) {
 	case string:
 		return strconv.Quote(x)

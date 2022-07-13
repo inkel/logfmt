@@ -60,7 +60,7 @@ var formatTests = map[any]string{
 
 func TestFormat(t *testing.T) {
 	for v, exp := range formatTests {
-		if got := format(v); exp != got {
+		if got := Format(v); exp != got {
 			t.Errorf("%T :: expecting %q, got %q", v, exp, got)
 		}
 	}
@@ -75,7 +75,7 @@ func BenchmarkFormat(b *testing.B) {
 		b.Run(fmt.Sprintf("%T", v), func(b *testing.B) {
 			b.ReportAllocs()
 			for i := 0; i < b.N; i++ {
-				s = format(v)
+				s = Format(v)
 			}
 			S = s
 		})
